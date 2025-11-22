@@ -1,9 +1,19 @@
 import fs from "fs";
+const STATE_FILE = "/tmp/niblit_state.json";
 
-export default function handler(req, res) {
-    const data = req.query.data || "No data";
+let state = { version: 1.0 };
+try {
+    const data = fs.readFileSync(STATE_FILE, "utf8");
+    state = JSON.parse(data);
+} catch {}
 
-    fs.appendFileSync("/tmp/niblit_custom_evolution.log", `${new Date().toISOString()} - ${data}\n`);
+// Evolution: increase version
+state.version = (state.version || 1.0) + 0.01;
 
-    res.status(200).json({ status: "ok", message: "Evolution updated" });
-}
+// Optional: simulate learning from internet (mock)
+state.last_learned = `Learned at ${new Date().toISOString()}`;
+
+// Save state
+fs.writeFileSync(STATE_FILE, JSON.stringify(state));
+
+console.log(`Niblit evolved to version ${state.version.toFixed(2)} - ${state.last_learned}`);

@@ -1,46 +1,52 @@
 import json
-import os
+import subprocess
 
-# Use a persistent file for memory (simple JSON storage)
-MEMORY_FILE = "api/memory.json"
+# Simulate persistent storage in a simple JSON file
+STATE_FILE = "/tmp/niblit_state.json"
 
-# Load memory from file
-def load_memory():
-    if os.path.exists(MEMORY_FILE):
-        with open(MEMORY_FILE, "r") as f:
-            return json.load(f)
-    return []
+# Load or initialize state
+try:
+    with open(STATE_FILE, "r") as f:
+        state = json.load(f)
+except:
+    state = {"chat_history": [], "version": 1.0}
 
-# Save memory to file
-def save_memory(memory):
-    with open(MEMORY_FILE, "w") as f:
-        json.dump(memory, f)
+def save_state():
+    with open(STATE_FILE, "w") as f:
+        json.dump(state, f)
 
 def handler(request):
     try:
         data = json.loads(request.get("body", "{}"))
-        user_message = data.get("message", "").strip()
-        memory = load_memory()
+        user_message = data.get("message", "")
 
-        if user_message:
-            # Store user message in memory
-            memory.append({"user": user_message})
-            
-            # Generate simple evolving response based on previous messages
-            reply = f"Niblit remembers {len(memory)} messages. You said: '{user_message}'"
-            memory.append({"bot": reply})
-        else:
-            reply = "Niblit: Say something!"
+        # Call chat.js to generate response
+        result = subprocess.run(
+            ["node", "/api/chat.js", user_message],
+            capture_output=True, text=True
+        )
+        chat_response = result.stdout.strip()
 
-        save_memory(memory)
-        return {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json"},
-            "body": json.dumps({"reply": reply})
+        # Update state
+        state["chat_history"].append({"user": user_message, "niblit": chat_response})
+        save_state()
+
+        # Call evolve.js to possibly evolve
+        evolve_result = subprocess.run(
+            ["node", "/api/evolve.js"],
+            capture_output=True, text=True
+        )
+        response = {
+            "message": chat_response,
+            "evolution": evolve_result.stdout.strip(),
+            "version": state["version"]
         }
 
     except Exception as e:
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"error": str(e)})
-        }
+        response = {"error": str(e)}
+
+    return {
+        "statusCode": 200,
+        "headers": {"Content-Type": "application/json"},
+        "body": json.dumps(response)
+    }
