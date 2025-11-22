@@ -1,57 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Niblit AI</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 50px; background:#f0f0f0; }
-        #chat { margin-top: 20px; }
-        .message { padding: 5px 10px; margin-bottom: 5px; border-radius: 5px; background: #fff; }
-        .user { background: #d1e7ff; }
-        .bot { background: #ffd1d1; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Niblit AI</title>
+<style>
+body { font-family: Arial; background:#f0f0f0; padding:20px; }
+#chat { margin-top:20px; max-height:400px; overflow-y:auto; }
+.message { padding:5px 10px; margin-bottom:5px; border-radius:5px; }
+.user { background:#d1e7ff; }
+.bot { background:#ffd1d1; }
+</style>
 </head>
 <body>
-    <h1>Niblit AI</h1>
-    <input type="text" id="userMessage" placeholder="Say something..." />
-    <button onclick="sendMessage()">Send</button>
+<h1>Niblit AI</h1>
+<input type="text" id="userMessage" placeholder="Say something..." />
+<button onclick="sendMessage()">Send</button>
+<div id="chat"></div>
+<script>
+async function sendMessage() {
+    const input = document.getElementById('userMessage');
+    const message = input.value;
+    input.value = '';
+    if (!message) return;
 
-    <div id="chat"></div>
+    const chat = document.getElementById('chat');
+    chat.scrollTop = chat.scrollHeight;
 
-    <script>
-        async function sendMessage() {
-            const input = document.getElementById('userMessage');
-            const message = input.value;
-            input.value = '';
+    const userMsg = document.createElement('div');
+    userMsg.className = 'message user';
+    userMsg.textContent = message;
+    chat.appendChild(userMsg);
 
-            if (!message) return;
+    try {
+        const res = await fetch('/api/index.py', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot';
+        botMsg.textContent = data.reply || 'No reply';
+        chat.appendChild(botMsg);
 
-            const chat = document.getElementById('chat');
-            const userMsg = document.createElement('div');
-            userMsg.className = 'message user';
-            userMsg.textContent = message;
-            chat.appendChild(userMsg);
-
-            try {
-                const res = await fetch('/api/index.py', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
-                });
-                const data = await res.json();
-                const botMsg = document.createElement('div');
-                botMsg.className = 'message bot';
-                botMsg.textContent = data.reply || 'No reply';
-                chat.appendChild(botMsg);
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    </script>
+        chat.scrollTop = chat.scrollHeight;
+    } catch (err) {
+        console.error(err);
+    }
+}
+</script>
 </body>
 </html>
-
 
 
           
