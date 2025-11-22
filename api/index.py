@@ -2,14 +2,15 @@ import json
 
 def handler(request):
     try:
+        # Parse the JSON body if sent via POST
         data = json.loads(request.get("body", "{}"))
-        user_message = data.get("message", "")
+        message = data.get("message", "")
 
-        # Basic AI logic placeholder (echo)
-        if user_message.strip() == "":
+        # Simple AI-style reply
+        if message.strip() == "":
             reply = "Niblit: Say something!"
         else:
-            reply = f"Niblit: I heard '{user_message}'"
+            reply = f"Niblit: I heard '{message}'"
 
         return {
             "statusCode": 200,
@@ -20,6 +21,5 @@ def handler(request):
     except Exception as e:
         return {
             "statusCode": 500,
-            "headers": {"Content-Type": "application/json"},
             "body": json.dumps({"error": str(e)})
         }
