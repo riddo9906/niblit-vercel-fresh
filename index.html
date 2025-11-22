@@ -3,17 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>Niblit AI</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 50px auto; }
+        #chat { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; }
+        .message { margin: 5px 0; }
+        .user { color: blue; }
+        .bot { color: green; }
+        input { width: 80%; padding: 10px; }
+        button { padding: 10px; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Niblit AI</h1>
-        <div id="chat-box"></div>
+    <h2>Niblit AI Chat</h2>
+    <div id="chat"></div>
+    <input type="text" id="input" placeholder="Say something...">
+    <button onclick="sendMessage()">Send</button>
 
-        <input id="userInput" type="text" placeholder="Say something..." autocomplete="off">
-        <button onclick="sendMessage()">Send</button>
-    </div>
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("input");
+            const message = input.value.trim();
+            if (!message) return;
 
-    <script src="script.js"></script>
+            appendMessage("user", message);
+            input.value = "";
+
+            const response = await fetch("/api/index.py", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message })
+            });
+
+            const data = await response.json();
+            appendMessage("bot", data.reply);
+        }
+
+        function appendMessage(sender, text) {
+            const chat = document.getElementById("chat");
+            const msgDiv = document.createElement("div");
+            msgDiv.className = "message " + sender;
+            msgDiv.textContent = text;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+    </script>
 </body>
 </html>
