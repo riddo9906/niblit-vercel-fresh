@@ -1,3 +1,14 @@
 {
-  "type": "module"
+  "name": "niblit-vercel",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node api/index.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.4.1",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^1.0.0"
+  }
 }

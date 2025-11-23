@@ -1,1 +1,4 @@
-.vercel
+node_modules/
+*.log
+niblit_data.json
+.vercel/
