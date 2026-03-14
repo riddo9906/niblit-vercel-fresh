@@ -1,4 +1,42 @@
+# Node
 node_modules/
-*.log
-niblit_data.json
+
+# Vercel
 .vercel/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+.venv/
+env/
+
+# Secrets & env
+.env
+*.env
+
+# Databases (runtime data, not committed)
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+nohup.out
+
+# Runtime state files (regenerated at runtime)
+niblit_state.json
+events.jsonl
+niblit_memory.db
+local_llm.db
+
+# OS
+.DS_Store
+Thumbs.db
