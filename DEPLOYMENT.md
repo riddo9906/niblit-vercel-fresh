@@ -32,7 +32,24 @@ On Vercel, set these variables via **Project → Settings → Environment Variab
 
 ---
 
-## Step 2 — Connect Repository to Vercel
+## Step 2 — Project Layout for Vercel
+
+Niblit is deployed as a **Python serverless function** — there is no frontend build step.
+
+Key files Vercel uses:
+
+| File | Purpose |
+|---|---|
+| `vercel.json` | Declares the `@vercel/python` builder, routes, and function settings |
+| `app.py` | The Flask WSGI application — packaged as the serverless function |
+| `requirements.txt` | Python dependencies — auto-installed by `@vercel/python` during build |
+| `public/index.html` | Static landing page served before the Flask function fully loads |
+
+The `@vercel/python` builder reads `requirements.txt` automatically; **no manual `buildCommand` is required**. All API routes are forwarded to `app.py` via the `routes` configuration in `vercel.json`.
+
+---
+
+## Step 3 — Connect Repository to Vercel
 
 1. Log in to the [Vercel Dashboard](https://vercel.com/dashboard).
 2. Click **Add New Project**.
@@ -43,7 +60,7 @@ On Vercel, set these variables via **Project → Settings → Environment Variab
 
 ---
 
-## Step 3 — Verify the Deployment
+## Step 4 — Verify the Deployment
 
 Once deployed, visit your Vercel URL and check the following endpoints:
 
@@ -67,7 +84,7 @@ curl https://<your-vercel-url>/ping
 
 ---
 
-## Step 4 — Cold Starts
+## Step 5 — Cold Starts
 
 Vercel serverless functions may experience a cold start on the first request after a period of inactivity. Niblit handles this gracefully:
 
@@ -78,6 +95,10 @@ Vercel serverless functions may experience a cold start on the first request aft
 ---
 
 ## Troubleshooting
+
+### `Missing public directory` build error
+
+This error occurs when `vercel.json` includes a top-level `buildCommand` that does not produce any static output. For a pure Python serverless deployment, **do not add a `buildCommand`** — the `@vercel/python` builder handles dependency installation automatically. Remove `buildCommand` from `vercel.json` to resolve this error.
 
 ### `{"error": "core failed"}` on `/chat`
 
