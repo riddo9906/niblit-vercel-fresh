@@ -47,10 +47,6 @@
     }
   ],
   "functions": {
-    "app.py": {
-      "memory": 768,
-      "maxDuration": 120
-    },
     "api/*.py": {
       "memory": 512,
       "maxDuration": 60
