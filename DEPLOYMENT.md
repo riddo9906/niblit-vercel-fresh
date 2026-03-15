@@ -32,7 +32,21 @@ On Vercel, set these variables via **Project → Settings → Environment Variab
 
 ---
 
-## Step 2 — Connect Repository to Vercel
+## Step 2 — Build Script
+
+Niblit's `vercel.json` includes an explicit build command:
+
+```json
+"buildCommand": "pip install -r requirements.txt"
+```
+
+This ensures all Python dependencies listed in `requirements.txt` are installed during the Vercel build phase before the serverless function is packaged. The `@vercel/python` builder then wraps `app.py` (the Flask WSGI application) as a serverless function.
+
+You do **not** need to run any build commands manually — Vercel executes this automatically on every deployment.
+
+---
+
+## Step 3 — Connect Repository to Vercel
 
 1. Log in to the [Vercel Dashboard](https://vercel.com/dashboard).
 2. Click **Add New Project**.
@@ -43,7 +57,7 @@ On Vercel, set these variables via **Project → Settings → Environment Variab
 
 ---
 
-## Step 3 — Verify the Deployment
+## Step 4 — Verify the Deployment
 
 Once deployed, visit your Vercel URL and check the following endpoints:
 
@@ -67,7 +81,7 @@ curl https://<your-vercel-url>/ping
 
 ---
 
-## Step 4 — Cold Starts
+## Step 5 — Cold Starts
 
 Vercel serverless functions may experience a cold start on the first request after a period of inactivity. Niblit handles this gracefully:
 
