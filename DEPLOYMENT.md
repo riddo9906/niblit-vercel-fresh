@@ -40,12 +40,18 @@ Key files Vercel uses:
 
 | File | Purpose |
 |---|---|
-| `vercel.json` | Declares the `@vercel/python` builder, routes, and function settings |
-| `app.py` | The Flask WSGI application — packaged as the serverless function |
+| `vercel.json` | Declares routes and function settings |
+| `app.py` | The Flask WSGI application — handles `/`, `/health`, `/ping`, `/chat`, `/memory` |
+| `api/boot.py` | Serverless entry point for `/api/boot` |
+| `api/suggest.py` | Serverless entry point for `/api/suggest` |
+| `api/threads.py` | Serverless entry point for `/api/threads` |
+| `api/commands.py` | Serverless entry point for `/api/commands` |
+| `api/status.py` | Serverless entry point for `/api/status` |
+| `api/search.py` | Serverless entry point for `/api/search` |
 | `requirements.txt` | Python dependencies — auto-installed by `@vercel/python` during build |
 | `public/index.html` | Static landing page served before the Flask function fully loads |
 
-The `@vercel/python` builder reads `requirements.txt` automatically; **no manual `buildCommand` is required**. All API routes are forwarded to `app.py` via the `routes` configuration in `vercel.json`.
+The `@vercel/python` builder reads `requirements.txt` automatically; **no manual `buildCommand` is required**. Root routes (`/`, `/health`, `/ping`, `/chat`, `/memory`) are handled by `app.py`. Each `/api/*` route is served by its own dedicated serverless function in the `api/` directory, all of which import the shared Flask app from `app.py`.
 
 ---
 
@@ -71,6 +77,12 @@ Once deployed, visit your Vercel URL and check the following endpoints:
 | `/ping` | GET | `{"status": "ok", "personality": {...}}` |
 | `/chat` | POST | `{"reply": "..."}` |
 | `/memory` | GET | `{"facts": [...]}` |
+| `/api/boot` | GET | `{"messages": [...], "ready": true}` |
+| `/api/suggest?q=<term>` | GET | `{"suggestions": [...]}` |
+| `/api/threads` | GET | `{"threads": [...]}` |
+| `/api/commands` | GET | `{"commands": [...], "count": N}` |
+| `/api/status` | GET | `{"online": true, "service": "niblit"}` |
+| `/api/search?q=<term>` | GET | `{"query": "...", "result": "..."}` |
 
 ### Quick health check
 

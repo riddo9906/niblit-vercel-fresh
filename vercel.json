@@ -19,23 +19,27 @@
     },
     {
       "src": "/api/boot",
-      "dest": "app.py"
+      "dest": "api/boot.py"
     },
     {
       "src": "/api/suggest",
-      "dest": "app.py"
+      "dest": "api/suggest.py"
     },
     {
       "src": "/api/threads",
-      "dest": "app.py"
+      "dest": "api/threads.py"
+    },
+    {
+      "src": "/api/commands",
+      "dest": "api/commands.py"
     },
     {
       "src": "/api/status",
-      "dest": "app.py"
+      "dest": "api/status.py"
     },
     {
       "src": "/api/search",
-      "dest": "app.py"
+      "dest": "api/search.py"
     },
     {
       "src": "/(.*)",
@@ -46,6 +50,10 @@
     "app.py": {
       "memory": 768,
       "maxDuration": 120
+    },
+    "api/*.py": {
+      "memory": 512,
+      "maxDuration": 60
     }
   },
   "env": {
