@@ -1,34 +1,43 @@
 #!/bin/bash
+# Fix Guide — platform-agnostic version
+# The steps below apply __main__ guards to several Niblit modules.
+# Replace <NIBLIT_ROOT> with the actual path to your Niblit project directory.
+
+NIBLIT_ROOT="${NIBLIT_ROOT:-$(pwd)}"
 
 echo '=== Fix Guide Started ==='
 
 echo "
 # Adding __main__ block to niblit_brain.py"
-cat >> "/data/data/com.termux/files/home/NiblitAIOS/Niblit-Modules/Niblit-apk/Niblit/niblit_brain.py" << EOF
+cat >> "${NIBLIT_ROOT}/niblit_brain.py" << 'EOF'
 if __name__ == "__main__":
     print('Running niblit_brain.py')
 EOF
+
 echo "
 # Adding __main__ block to self_implementer.py"
-cat >> "/data/data/com.termux/files/home/NiblitAIOS/Niblit-Modules/Niblit-apk/Niblit/modules/self_implementer.py" << EOF
+cat >> "${NIBLIT_ROOT}/modules/self_implementer.py" << 'EOF'
 if __name__ == "__main__":
     print('Running self_implementer.py')
 EOF
+
 echo "
 # Adding __main__ block to ingestion.py"
-cat >> "/data/data/com.termux/files/home/NiblitAIOS/Niblit-Modules/Niblit-apk/Niblit/modules/ingestion.py" << EOF
+cat >> "${NIBLIT_ROOT}/modules/ingestion.py" << 'EOF'
 if __name__ == "__main__":
     print('Running ingestion.py')
 EOF
+
 echo "
 # Adding __main__ block to slsa_manager.py"
-cat >> "/data/data/com.termux/files/home/NiblitAIOS/Niblit-Modules/Niblit-apk/Niblit/modules/slsa_manager.py" << EOF
+cat >> "${NIBLIT_ROOT}/modules/slsa_manager.py" << 'EOF'
 if __name__ == "__main__":
     print('Running slsa_manager.py')
 EOF
+
 echo "
 # Adding __main__ block to self_idea_generator.py"
-cat >> "/data/data/com.termux/files/home/NiblitAIOS/Niblit-Modules/Niblit-apk/Niblit/modules/self_idea_generator.py" << EOF
+cat >> "${NIBLIT_ROOT}/modules/self_idea_generator.py" << 'EOF'
 if __name__ == "__main__":
     print('Running self_idea_generator.py')
 EOF
