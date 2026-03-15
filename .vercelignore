@@ -1,0 +1,44 @@
+# Vercel deployment ignore file
+# Excludes files that would bloat the lambda bundle beyond the 50 MB limit
+
+# Large full-module Python files (not needed for serverless API)
+*_full.py
+
+# Python cache artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local environment file (use Vercel dashboard for env vars)
+.env
+
+# Development / debug scripts
+Fix_Guide.txt
+hf_test.py
+run_diagnostics.py
+live_command_tester.py
+workspace_init.py
+
+# Procfile (Heroku-specific, not used on Vercel)
+Procfile
+
+# Runtime-generated state files
+niblit_state.json
+events.jsonl
+niblit_memory.db
+local_llm.db
+
+# Large data / model files
+*.bin
+*.safetensors
+*.gguf
+*.onnx
+*.pt
+*.pth
+
+# Dependency directories
+node_modules/
+venv/
+.venv/
+env/

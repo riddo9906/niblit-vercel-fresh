@@ -24,10 +24,19 @@ except ImportError:
     Flask = request = jsonify = render_template_string = Response = None
     _flask_available = False
 
+_logger = logging.getLogger("NiblitApp")
+
+_niblit_core_import_error: str | None = None
 try:
     from niblit_core import NiblitCore
-except Exception:
+except ImportError as _ie:
     NiblitCore = None
+    _niblit_core_import_error = f"ImportError: {_ie}"
+    _logger.error("NiblitCore could not be imported — running in degraded mode. %s", _ie)
+except Exception as _exc:
+    NiblitCore = None
+    _niblit_core_import_error = f"{type(_exc).__name__}: {_exc}"
+    _logger.error("Unexpected error importing NiblitCore: %s", _exc)
 
 if _flask_available:
     app = Flask(__name__)
@@ -172,10 +181,11 @@ def get_core():
     global _core  # pylint: disable=global-statement
     if _core is None and NiblitCore:
         try:
+            _logger.info("Initialising NiblitCore...")
             _core = NiblitCore()
+            _logger.info("NiblitCore initialised successfully")
         except Exception as exc:
-            if app:
-                app.logger.error("NiblitCore init error: %s", exc)
+            _logger.error("NiblitCore init error (%s): %s", type(exc).__name__, exc)
     return _core
 
 
@@ -1206,7 +1216,10 @@ if _flask_available:
     @app.route("/health", methods=["GET"])
     def health():
         """Lightweight liveness probe — no NiblitCore init required."""
-        return render_response({"status": "ok", "service": "niblit"})
+        payload = {"status": "ok", "service": "niblit", "core_available": NiblitCore is not None}
+        if _niblit_core_import_error:
+            payload["core_import_error"] = _niblit_core_import_error
+        return render_response(payload)
 
     # ── Dashboard / root ────────────────────────────────────
     @app.route("/", methods=["GET"])
