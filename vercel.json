@@ -49,8 +49,7 @@
   "functions": {
     "api/*.py": {
       "memory": 512,
-      "maxDuration": 60,
-      "includeFiles": "*.py|modules/**"
+      "maxDuration": 60
     }
   },
   "env": {
