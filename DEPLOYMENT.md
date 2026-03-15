@@ -32,17 +32,20 @@ On Vercel, set these variables via **Project → Settings → Environment Variab
 
 ---
 
-## Step 2 — Build Script
+## Step 2 — Project Layout for Vercel
 
-Niblit's `vercel.json` includes an explicit build command:
+Niblit is deployed as a **Python serverless function** — there is no frontend build step.
 
-```json
-"buildCommand": "pip install -r requirements.txt"
-```
+Key files Vercel uses:
 
-This ensures all Python dependencies listed in `requirements.txt` are installed during the Vercel build phase before the serverless function is packaged. The `@vercel/python` builder then wraps `app.py` (the Flask WSGI application) as a serverless function.
+| File | Purpose |
+|---|---|
+| `vercel.json` | Declares the `@vercel/python` builder, routes, and function settings |
+| `app.py` | The Flask WSGI application — packaged as the serverless function |
+| `requirements.txt` | Python dependencies — auto-installed by `@vercel/python` during build |
+| `public/index.html` | Static landing page served before the Flask function fully loads |
 
-You do **not** need to run any build commands manually — Vercel executes this automatically on every deployment.
+The `@vercel/python` builder reads `requirements.txt` automatically; **no manual `buildCommand` is required**. All API routes are forwarded to `app.py` via the `routes` configuration in `vercel.json`.
 
 ---
 
@@ -92,6 +95,10 @@ Vercel serverless functions may experience a cold start on the first request aft
 ---
 
 ## Troubleshooting
+
+### `Missing public directory` build error
+
+This error occurs when `vercel.json` includes a top-level `buildCommand` that does not produce any static output. For a pure Python serverless deployment, **do not add a `buildCommand`** — the `@vercel/python` builder handles dependency installation automatically. Remove `buildCommand` from `vercel.json` to resolve this error.
 
 ### `{"error": "core failed"}` on `/chat`
 
